@@ -1,0 +1,126 @@
+#%RAML 1.0
+title: Mule Crud
+
+types:
+  Respuesta-Empleado: !include empleadoType.raml
+  Respuesta-MultiplesEmpleados: !include multiplesEmpleadosType.raml
+  Respuesta-Mensaje:
+    properties:
+      status: number
+      message: string
+
+/empleado:
+  get:
+    description: Este recurso es usar para obtener los empleados registrados.
+    responses:
+      200:
+        body:
+          application/json:
+            type: Respuesta-MultiplesEmpleados
+            examples:
+              output:
+                status: 200
+                user: !include multiplesEmpleadosEjemplo.raml 
+      404:
+        body:
+          application/json:
+            type: Respuesta-Mensaje
+            examples:
+              output:
+                status: 404
+                message: Usuario no encontrado
+  post:
+    description: Este recurso nos permitira registrar un nuevo empleado.
+    body:
+        application/json:
+          type: object
+          properties:
+            cedula: number
+            nombre: string
+            telefono: number
+            cargo: string
+          example: !include empleadoEjemplo.raml
+    responses:
+      200:
+        body:
+          application/json:
+            type: Respuesta-Mensaje
+            examples:
+              output: 
+                status: 200
+                message: Empleado registrado correctamente   
+      409:
+        body:
+          application/json:
+            type: Respuesta-Mensaje
+            examples:
+              output:
+                status: 404
+                message: El usuario ya existe
+  /{cedula}:
+    get:
+      description: Este recurso nos sirve para obtener los datos de un empleado filtrando por la cedula.
+      responses:
+        200:
+          body:
+            application/json:
+              type: Respuesta-Empleado
+              examples:
+                output:
+                  status: 200
+                  user: !include empleadoEjemplo.raml
+        404:
+          body:
+            application/json:
+              type: Respuesta-Mensaje
+              examples:
+                output:
+                  status: 404
+                  message: Usuario no encontrado
+    delete:
+      description: Este recurso nos permitira eliminar empleados filtrando por la cedula.
+      responses:
+        200:
+          body:
+            application/json:
+              type: Respuesta-Mensaje
+              examples:
+                output:
+                  status: 200
+                  message: Empleado Eliminado correctamente
+        404:
+          body:
+            application/json:
+              type: Respuesta-Mensaje
+              examples:
+                output:
+                  status: 404
+                  message: Usuario no encontrado
+    post:
+      description: Este recurso nos servira para actualizar los datos de un empleado filtrando por su cedula.
+      body:
+        application/json:
+          type: object
+          properties:
+            cedula: number
+            nombre: string
+            telefono: number
+            cargo: string
+          example: !include empleadoEjemplo.raml 
+      responses:
+        200:
+          body:
+            application/json:
+              type: Respuesta-Mensaje
+              examples:
+                output:
+                  status: 200
+                  message: Empleado actualizado correctamente
+        404:
+          body:
+            application/json:
+              type: Respuesta-Mensaje
+              examples:
+                output:
+                  status: 404
+                  message: Usuario no encontrado
